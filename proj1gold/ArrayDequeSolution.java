@@ -17,7 +17,7 @@ public class ArrayDequeSolution<Item> extends LinkedList<Item> {
     public Item removeFirst() {
         try {
             return super.removeFirst();
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -25,7 +25,7 @@ public class ArrayDequeSolution<Item> extends LinkedList<Item> {
     public Item removeLast() {
         try {
             return super.removeLast();
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             return null;
         }
     }

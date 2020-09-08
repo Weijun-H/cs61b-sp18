@@ -5,8 +5,8 @@ import static org.junit.Assert.*;
 public class AssertEqualsStringDemo {
     @Test
     public void test1() {
-        int expected = 20;
-        int actual = StdRandom.uniform(4);
+        int expected = 5;
+        int actual = StdRandom.uniform(9);
         assertEquals("Oh noooo!\nThis is bad:\n   Random number " + actual 
                      + " not equal to " + expected + "!", 
                      expected, actual);

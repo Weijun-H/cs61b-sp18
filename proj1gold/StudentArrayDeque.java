@@ -26,8 +26,7 @@ public class StudentArrayDeque<T> {
             }
 
             ++this.c;
-        } catch (RuntimeException rte) {
-            return;
+        } catch (Exception e) {
         }
     }
 
@@ -45,8 +44,7 @@ public class StudentArrayDeque<T> {
             }
 
             ++this.c;
-        } catch (RuntimeException rte) {
-            return;
+        } catch (Exception e) {
         }
     }
 
@@ -92,7 +90,7 @@ public class StudentArrayDeque<T> {
                     return (T) var1;
                 }
             }
-        } catch (RuntimeException rte) {
+        } catch (Exception e) {
             return z;
         }
     }
@@ -142,7 +140,7 @@ public class StudentArrayDeque<T> {
                     return (T) var1;
                 }
             }
-        } catch (RuntimeException rte) {
+        } catch (Exception e) {
             return z;
         }
     }
@@ -285,7 +283,7 @@ public class StudentArrayDeque<T> {
             } else {
                 return (T) this.a[this.e + var1 + 1];
             }
-        } catch (RuntimeException rte) {
+        } catch (Exception e) {
             return z;
         }
     }
