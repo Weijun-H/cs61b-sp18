@@ -58,6 +58,15 @@ public class Planet{
     public Boolean equal(Planet p){
         return this == p ? true : false;
     }
+
+    public void update(double dt, double fX, double fY){
+        double a_x = fX / mass;
+        double a_y = fY / mass;
+        xxVel += dt * a_x;
+        yyVel += dt * a_y;
+        xxPos += dt * xxVel;
+        yyPos += dt * yyVel;
+    }
     public static void main(String[] args) {
         
     }
