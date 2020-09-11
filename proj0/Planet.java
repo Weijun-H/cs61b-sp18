@@ -17,6 +17,11 @@ public class Planet{
         mass = p.mass;
         imgFileName = p.imgFileName;
     }
+    public double calcDistance(Planet p){
+        double x_2 = Math.pow((xxPos - p.xxPos), 2);
+        double y_2 = Math.pow((yyPos - p.yyPos), 2);
+        return (Math.pow((x_2 + y_2),0.5));
+    }
     public static void main(String[] args) {
         
     }
