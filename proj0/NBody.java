@@ -6,6 +6,11 @@ public class NBody {
         return Radius;
     }
     
+    public static int readN(String FileName){
+        In in = new In(FileName);
+        int n = in.readInt(); 
+        return n;
+    }
     public static Planet[] readPlanets(String FileName){
         In in = new In(FileName);
         int index = 0;
@@ -23,5 +28,51 @@ public class NBody {
             index++;
         }
         return Names;
+    }
+        
+    public static void main(String[] args) {
+        double T, dt;
+        T = Double.parseDouble(args[0]);
+        dt = Double.parseDouble(args[1]);
+        String FileName = args[2];
+        double Radius = readRadius(FileName);
+        Planet[] Ps = readPlanets(FileName);
+
+        StdDraw.setScale(-Radius, Radius);
+        StdDraw.clear();
+        StdDraw.picture(0, 0, "images/starfield.jpg");
+
+        for(Planet p : Ps){
+            p.draw();
+        }
+
+        int n = readN(FileName);
+        StdDraw.enableDoubleBuffering();
+
+        double t = 0;
+        while(t < T){
+            double[] xForces = new double[n];
+            double[] yForces = new double[n];
+            for (int i = 0; i < n; i++) {
+                xForces[i] = Ps[i].calcNetForceExertedByX(Ps);
+                yForces[i] = Ps[i].calcNetForceExertedByY(Ps);
+            }
+
+            for (int i = 0; i < n; i++) {
+                Ps[i].update(dt, xForces[i], yForces[i]);
+            }
+    
+            StdDraw.picture(0, 0, "images/starfield.jpg");
+     
+            for(Planet p : Ps){
+                p.draw();
+            }
+            StdDraw.show();
+
+            StdDraw.pause(10);
+            t += dt;
+        }
+        StdDraw.show();
+
     }
 }
