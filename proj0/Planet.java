@@ -44,9 +44,7 @@ public class Planet{
             if(this.equals(i)){
                 continue;
             }
-            double F = calcForceExertedBy(i);
-            double r = calcDistance(i);
-            F_x += F*(xxPos - i.xxPos) / r;
+            F_x += this.calcForceExertedByX(i);
 
         }
         return F_x;
@@ -57,9 +55,7 @@ public class Planet{
             if(this.equals(i)){
                 continue;
             }
-            double F = calcForceExertedBy(i);
-            double r = calcDistance(i);
-            F_y += F*(Math.abs(yyPos - i.yyPos)) / r;
+            F_y += this.calcForceExertedByY(i);
 
         }
         return F_y;
