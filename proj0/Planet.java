@@ -18,6 +18,7 @@ public class Planet{
         mass = p.mass;
         imgFileName = p.imgFileName;
     }
+    
 
     public double calcDistance(Planet p){
         double x_2 = Math.pow((xxPos - p.xxPos), 2);
@@ -27,6 +28,14 @@ public class Planet{
     
     public double calcForceExertedBy(Planet p){
         return (G * mass * p.mass / (calcDistance(p) * calcDistance(p)));
+    }
+
+    public double calcForceExertedByX(Planet p){
+        return Math.abs(p.xxPos-xxPos)/calcDistance(p)*calcForceExertedBy(p);
+    }
+
+    public double calcForceExertedByY(Planet p){
+        return Math.abs(p.yyPos-yyPos)/calcDistance(p)*calcForceExertedBy(p);
     }
 
     public double calcNetForceExertedByX(Planet p[]){
