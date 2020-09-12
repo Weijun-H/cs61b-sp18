@@ -12,14 +12,14 @@ public class NBody {
         int n = in.readInt();
         Planet[] Names = new Planet[n];
         double Radius = in.readDouble();
-        while(!in.isEmpty()){
-            Names[index].xxPos = in.readDouble();
-            Names[index].yyPos = in.readDouble();
-            Names[index].xxVel = in.readDouble();
-            Names[index].yyVel = in.readDouble();
-            Names[index].mass = in.readDouble();
- 
-            Names[index].imgFileName = in.readString();
+        while(n-- > 0){
+            double xxPos = in.readDouble();
+            double yyPos = in.readDouble();
+            double xxVel = in.readDouble();
+            double yyVel = in.readDouble();
+            double mass = in.readDouble();
+            String imgFileName = in.readString();
+            Names[index] = new Planet(xxPos, yyPos, xxVel, yyVel, mass, imgFileName);
             index++;
         }
         return Names;
