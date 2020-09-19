@@ -80,8 +80,8 @@ public class LinkedListDeque<T> {
     }
 
     public T get(int index) {
-        Node temp = sentBack.next;
-        if (index > size - 1 || index < 0) {
+        Node temp = sentFront.next;
+        if (index > size - 1 || index < 0 || isEmpty()) {
             return null;
         }
         for (int i = 0; i < index; i++) {
