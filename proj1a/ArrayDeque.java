@@ -18,62 +18,53 @@ public class ArrayDeque<T> {
         T[] a = (T[]) new Object[capacity];
         System.arraycopy(items, 0, a, 0, size);
         items = a;
-        _capability = capacity;
+        _capability = capacity - 2;
     }
 
     /** Insert X into the back of list*/
     public void addLast(T x) {
-        if (nextLast + 1 >= size) {
+        if (size + 2 == _capability) {
             resize(size * 2);
         }
         items[nextLast] = x;
-        nextLast = (nextLast + 1) % size;
+        nextLast = (nextLast + 1) % (_capability + 2);
         size++;
     }
 
     /** Insert X into the front of the list*/
     public void addFirst(T x) {
-        if (nextFirst - 1 < 0) {
+        if (size + 2 == _capability) {
             resize(size * 2);
         }
+        int index = nextFirst;
         items[nextFirst] = x;
-        if (nextFirst - 1 < 0) {
-            nextFirst = size - 1;
-        } else {
-            nextFirst--;
-        }
+        nextFirst = (nextFirst - 1 + _capability + 2) % (_capability + 2);
         size++;
     }
 
     /** Remove the item in the front of list*/
     public T removeFirst() {
-        if (size == 0) {
+        if (isEmpty()) {
             return null;
         }
-        int firstIndex = (nextFirst + 1) % size;
+        int firstIndex = (nextFirst + 1) % (_capability + 2);
         T first = items[firstIndex];
         items[firstIndex] = null;
         nextFirst = firstIndex;
         if (Double.valueOf(size) / Double.valueOf(_capability) < 0.25) {
             resize(size * 2);
         }
-
         size--;
         return first;
     }
 
     /** Remove the item in the back of list */
     public T removeLast() {
-        if (size == 0) {
+        if (isEmpty()) {
             return null;
         }
 
-        int lastIndex;
-        if (nextLast - 1 < 0) {
-            lastIndex = size - 1;
-        } else {
-            lastIndex = nextLast - 1;
-        }
+        int lastIndex = (nextLast - 1 + _capability + 2) % ( _capability + 2);
         T last = items[lastIndex];
 
         if (Double.valueOf(size) / Double.valueOf(_capability) < 0.25) {
@@ -88,10 +79,14 @@ public class ArrayDeque<T> {
 
     /** Gets the ith item in the list (0 is the front). */
     public T get(int index) {
-        if (index < 0 || index > size - 1) {
+        if (isEmpty()) {
             return null;
-        } else {
+        } else if (nextFirst < nextLast && index > nextFirst && index < nextLast){
             return items[index];
+        } else if (nextFirst > nextLast && index < nextLast || index > nextFirst){
+            return items[index];
+        } else {
+            return null;
         }
     }
 
