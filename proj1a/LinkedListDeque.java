@@ -1,15 +1,18 @@
 public class LinkedListDeque<T> {
     private int size;
     private Node sentFront, sentBack;
+
     private class Node {
         T item;
         Node next;
         Node prev;
+
         Node(T i, Node n, Node p) {
             item = i;
             next = n;
             prev = p;
         }
+
         Node() {
             item = null;
             next = prev = null;
@@ -45,6 +48,7 @@ public class LinkedListDeque<T> {
     public int size() {
         return size;
     }
+
     public void printDeque() {
         Node cnt = sentFront.next;
         for (int i = 0; i < size; i++) {
@@ -52,26 +56,29 @@ public class LinkedListDeque<T> {
             cnt = cnt.next;
         }
     }
+
     public T removeFirst() {
         if (isEmpty()) {
             return null;
         }
         T temp = sentFront.next.item;
         sentFront.next = sentFront.next.next;
-        sentFront.next.prev = sentBack;
+        sentFront.next.prev = sentFront;
         size--;
         return temp;
     }
+
     public T removeLast() {
         if (isEmpty()) {
             return null;
         }
         T temp = sentBack.prev.item;
         sentBack.prev = sentBack.prev.prev;
-        sentBack.prev.next = sentFront;
+        sentBack.prev.next = sentBack;
         size--;
         return temp;
     }
+
     public T get(int index) {
         Node temp = sentBack.next;
         if (index > size - 1 || index < 0) {
@@ -82,6 +89,7 @@ public class LinkedListDeque<T> {
         }
         return temp.item;
     }
+
     private T getrecursive(Node p, int index, int start) {
         if (start == index + 1) {
             return p.item;
@@ -90,6 +98,6 @@ public class LinkedListDeque<T> {
     }
 
     public T getRecursive(int index) {
-        return getrecursive(sentFront, index,  0);
+        return getrecursive(sentFront, index, 0);
     }
 }
