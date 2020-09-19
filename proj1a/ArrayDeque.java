@@ -15,7 +15,7 @@ public class ArrayDeque<T> {
 
     /** Resize the underlying array to the target capacity. */
     private void resize(int capacity) {
-        T[] a = (T[]) new Object();
+        T[] a = (T[]) new Object[capacity];
         System.arraycopy(items, 0, a, 0, size);
         items = a;
         _capability = capacity;
@@ -100,7 +100,20 @@ public class ArrayDeque<T> {
         return size;
     }
 
+    /** Return whether the number of items is 0 */
     public boolean isEmpty() {
         return size == 0;
     }
+
+    /** Print Deque */
+    public void printDeque(){
+        int start = nextFirst;
+        int end = nextLast;
+        int index = (start + 1) % size;
+        while (index != end) {
+            System.out.print(items[index] + " ");
+            index = (index + 1) % size;
+        }
+    }
+
 }
