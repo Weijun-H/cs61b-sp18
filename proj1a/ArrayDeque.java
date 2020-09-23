@@ -104,11 +104,10 @@ public class ArrayDeque<T> {
     public void printDeque(){
         int start = nextFirst;
         int end = nextLast;
-        int index = (start + 1) % size;
+        int index = (start + 1) % (_capability + 2);
         while (index != end) {
             System.out.print(items[index] + " ");
-            index = (index + 1) % size;
+            index = (index + 1) % (_capability + 2);
         }
     }
-
 }
