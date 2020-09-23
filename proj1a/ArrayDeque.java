@@ -10,7 +10,7 @@ public class ArrayDeque<T> {
         size = 0;
         nextFirst = 3;
         nextLast = 4;
-        _capability = 8;
+        _capability = 6;
     }
 
     /** Resize the underlying array to the target capacity. */
