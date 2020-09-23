@@ -64,7 +64,7 @@ public class ArrayDeque<T> {
             return null;
         }
 
-        int lastIndex = (nextLast - 1 + _capability + 2) % ( _capability + 2);
+        int lastIndex = (nextLast - 1 + _capability + 2) % (_capability + 2);
         T last = items[lastIndex];
 
         if (Double.valueOf(size) / Double.valueOf(_capability) < 0.25) {
@@ -81,9 +81,9 @@ public class ArrayDeque<T> {
     public T get(int index) {
         if (isEmpty()) {
             return null;
-        } else if (nextFirst < nextLast && index > nextFirst && index < nextLast){
+        } else if (nextFirst < nextLast && index > nextFirst && index < nextLast) {
             return items[index];
-        } else if (nextFirst > nextLast && index < nextLast || index > nextFirst){
+        } else if (nextFirst > nextLast && (index < nextLast || index > nextFirst)) {
             return items[index];
         } else {
             return null;
@@ -101,7 +101,7 @@ public class ArrayDeque<T> {
     }
 
     /** Print Deque */
-    public void printDeque(){
+    public void printDeque() {
         int start = nextFirst;
         int end = nextLast;
         int index = (start + 1) % (_capability + 2);
@@ -109,5 +109,17 @@ public class ArrayDeque<T> {
             System.out.print(items[index] + " ");
             index = (index + 1) % (_capability + 2);
         }
+    }
+    public static void main(String[] args) {
+        ArrayDeque<Integer> A = new ArrayDeque<Integer> ();
+        A.addFirst(2);
+        A.addFirst(1);
+        A.addLast(3);
+        A.addFirst(2);
+        A.addFirst(1);
+        A.addLast(3);
+        System.out.println(A.size());
+        A.get(8);
+        A.printDeque();
     }
 }
