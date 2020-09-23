@@ -135,12 +135,33 @@ public class IntList {
         return start;
     }
 
+    /**
+     * Returns the reverse of the given IntList.
+     * This method is destructive. If given null
+     * as an input, returns null.
+     */
+    public static IntList reverse(IntList A) {
+        if (A == null) {
+        return null;
+        } else {
+            IntList B = new IntList();
+            A._reverse(B);
+            return B;
+        }
+    }
 
+    private IntList _reverse(IntList B) {
+        if (this.rest == null) {
+            B.first = this.first;
+            return B;
+        } else {
+            B = this.rest._reverse(B);
+            IntList temp = new IntList(this.first, null);
+            B.rest = temp;
+            return B.rest;
+        }
 
-
-
-
-
+    }
 
 
 
