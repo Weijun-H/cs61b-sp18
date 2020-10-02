@@ -109,14 +109,4 @@ public class ArrayDeque<T> {
             index = (index + 1) % (_capability + 2);
         }
     }
-
-    public static void main(String[] args) {
-        ArrayDeque<Integer> A = new ArrayDeque<Integer>();
-        for (int i = 0; i < 8; i++) {
-            A.addLast(i);
-        }
-
-
-        System.out.print(A.get(3));
-    }
 }
