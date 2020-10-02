@@ -16,7 +16,7 @@ public class ArrayDeque<T> {
     /** Resize the underlying array to the target capacity. */
     private void resize(int capacity) {
         T[] a = (T[]) new Object[capacity];
-        System.arraycopy(items, 0, a, 0, size);
+        System.arraycopy(items, nextFirst, a, nextFirst, size + 1);
         items = a;
         _capability = capacity - 2;
     }
