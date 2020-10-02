@@ -79,15 +79,10 @@ public class ArrayDeque<T> {
 
     /** Gets the ith item in the list (0 is the front). */
     public T get(int index) {
-        if (isEmpty() || index >= _capability + 2) {
-            return null;
-        } else if (nextFirst < nextLast && index > nextFirst && index < nextLast) {
-            return items[index];
-        } else if (nextFirst > nextLast && (index < nextLast || index > nextFirst)) {
-            return items[index];
-        } else {
+        if (index+1 > size) {
             return null;
         }
+        return items[(nextFirst + 1 + 0)%(_capability+2)];
     }
 
     /** Returns the number of items in the list. */
