@@ -75,7 +75,7 @@ public class ArrayDeque<T> {
             resize(size * 2);
         }
 
-        nextLast = lastIndex;
+        nextLast = (nextLast - 1 + _capability + 2) % (_capability + 2);
         items[nextLast] = null;
         size--;
         return last;
