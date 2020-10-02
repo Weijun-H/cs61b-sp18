@@ -16,14 +16,18 @@ public class ArrayDeque<T> {
     /** Resize the underlying array to the target capacity. */
     private void resize(int capacity) {
         T[] a = (T[]) new Object[capacity];
-        System.arraycopy(items, nextFirst, a, nextFirst, size + 1);
+        for (int i = 0; i < size; i++) {
+            a[i+1] = this.get(i);
+        }
+        nextFirst = 0;
+        nextLast = size + 1;
         items = a;
         _capability = capacity - 2;
     }
 
     /** Insert X into the back of list*/
     public void addLast(T x) {
-        if (size + 2 == _capability) {
+        if (size + 1 > _capability) {
             resize(size * 2);
         }
         items[nextLast] = x;
@@ -33,7 +37,7 @@ public class ArrayDeque<T> {
 
     /** Insert X into the front of the list*/
     public void addFirst(T x) {
-        if (size + 2 == _capability) {
+        if (size + 1 > _capability) {
             resize(size * 2);
         }
         int index = nextFirst;
@@ -82,7 +86,7 @@ public class ArrayDeque<T> {
         if (index+1 > size) {
             return null;
         }
-        return items[(nextFirst + 1 + 0)%(_capability+2)];
+        return items[(nextFirst + 1 + index)%(_capability+2)];
     }
 
     /** Returns the number of items in the list. */
@@ -104,5 +108,15 @@ public class ArrayDeque<T> {
             System.out.print(items[index] + " ");
             index = (index + 1) % (_capability + 2);
         }
+    }
+
+    public static void main(String[] args) {
+        ArrayDeque<Integer> A = new ArrayDeque<Integer>();
+        for (int i = 0; i < 8; i++) {
+            A.addLast(i);
+        }
+
+
+        System.out.print(A.get(3));
     }
 }
