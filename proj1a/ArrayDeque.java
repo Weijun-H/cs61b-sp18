@@ -56,7 +56,7 @@ public class ArrayDeque<T> {
         items[firstIndex] = null;
         nextFirst = firstIndex;
         if (Double.valueOf(size) / Double.valueOf(_capability) < 0.25) {
-            resize(size * 2);
+            resize(size * 3);
         }
         size--;
         return first;
@@ -72,7 +72,7 @@ public class ArrayDeque<T> {
         T last = items[lastIndex];
 
         if (Double.valueOf(size) / Double.valueOf(_capability) < 0.25) {
-            resize(size * 2);
+            resize(size * 3);
         }
 
         nextLast = (nextLast - 1 + _capability + 2) % (_capability + 2);
