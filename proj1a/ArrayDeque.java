@@ -28,7 +28,7 @@ public class ArrayDeque<T> {
     /** Insert X into the back of list*/
     public void addLast(T x) {
         if (size + 1 > _capability) {
-            resize(size * 2);
+            resize(size * 3);
         }
         items[nextLast] = x;
         nextLast = (nextLast + 1) % (_capability + 2);
@@ -38,7 +38,7 @@ public class ArrayDeque<T> {
     /** Insert X into the front of the list*/
     public void addFirst(T x) {
         if (size + 1 > _capability) {
-            resize(size * 2);
+            resize(size * 3);
         }
         int index = nextFirst;
         items[nextFirst] = x;
