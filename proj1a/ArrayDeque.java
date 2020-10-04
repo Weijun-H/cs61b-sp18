@@ -15,6 +15,9 @@ public class ArrayDeque<T> {
 
     /** Resize the underlying array to the target capacity. */
     private void resize(int capacity) {
+        if ( capacity == 0 ) {
+            capacity = 3;
+        }
         T[] a = (T[]) new Object[capacity];
         for (int i = 0; i < size; i++) {
             a[i+1] = this.get(i);
@@ -55,10 +58,11 @@ public class ArrayDeque<T> {
         T first = items[firstIndex];
         items[firstIndex] = null;
         nextFirst = firstIndex;
+        size--;
         if (Double.valueOf(size) / Double.valueOf(_capability) < 0.25) {
             resize(size * 3);
         }
-        size--;
+
         return first;
     }
 
@@ -70,14 +74,14 @@ public class ArrayDeque<T> {
 
         int lastIndex = (nextLast - 1 + _capability + 2) % (_capability + 2);
         T last = items[lastIndex];
+        items[nextLast] = null;
+        nextLast = lastIndex;
 
+        size--;
         if (Double.valueOf(size) / Double.valueOf(_capability) < 0.25) {
             resize(size * 3);
         }
 
-        nextLast = (nextLast - 1 + _capability + 2) % (_capability + 2);
-        items[nextLast] = null;
-        size--;
         return last;
     }
 
