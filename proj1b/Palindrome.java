@@ -1,19 +1,18 @@
 public class Palindrome {
-    public Deque<Character> wordToDeque(String word){
+    public Deque<Character> wordToDeque(String word) {
         Deque<Character> words = new ArrayDeque<Character>();
-        for(char i : word.toCharArray()){
+        for (char i : word.toCharArray()) {
             words.addLast(i);
         }
         return words;
     }
 
-    public boolean isPalindrome(String word){
-        Deque<Character> d = this.wordToDeque(word);
-        for (int i = 0; i < d.size()/2; i++) {
-            if (d.get(i) != d.get(d.size()-1-i)) {
-                return false;
-            }
+    public boolean isPalindrome(String word) {
+        if (word.length() <= 1) {
+            return true;
+        } else if (word.toCharArray()[0] == word.toCharArray()[word.length()-1]) {
+            return this.isPalindrome(word.substring(1,word.length()-1));
         }
-        return true;
+        return false;
     }
 }
