@@ -15,4 +15,14 @@ public class Palindrome {
         }
         return false;
     }
+
+    public boolean isPalindrome(String word, CharacterComparator cc){
+        if (word.length() <= 1) {
+            return true;
+        } else if (cc.equalChars(word.toCharArray()[0], word.toCharArray()[word.length()-1])) {
+            return this.isPalindrome(word.substring(1,word.length()-1), cc);
+        }
+        return false;
+    }
+
 }
