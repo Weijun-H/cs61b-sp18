@@ -52,11 +52,11 @@ public class ArrayRingBuffer<T> extends AbstractBoundedQueue<T> {
     public T dequeue() {
         // TODO: Dequeue the first item. Don't forget to decrease fillCount and update
         if(!isEmpty()){
-            int index = first;
+            T value = rb[first];
             rb[first] = null;
             first = (first + 1) % capacity;
             fillCount--;
-            return rb[index];
+            return value;
         }
         else {
            throw new RuntimeException("Ring buffer underflow");
@@ -70,8 +70,9 @@ public class ArrayRingBuffer<T> extends AbstractBoundedQueue<T> {
         // TODO: Return the first item. None of your instance variables should change.
         if(!isEmpty()){
             return rb[first];
+        }else {
+            throw new RuntimeException("Ring buffer is empty");
         }
-        return null;
     }
 
     // TODO: When you get to part 5, implement the needed code to support iteration.
