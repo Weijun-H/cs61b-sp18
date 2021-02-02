@@ -125,10 +125,10 @@ public class HexWorld {
         HexWorld HW = new HexWorld();
         int side = 3;
         Position p1 = new Position(10, 0);
-        Position p2 = new Position(p1.x + 2 * side - 1, p1.y);
+        Position p2 = new Position(p1.x + 2 * side , p1.y);
         TETile material = Tileset.WALL;
         HW.addHexagon(world, p1, side, material);
-
+        HW.addHexagon(world, p2, side, material);
         // draws the world to the screen
         ter.renderFrame(world);
     }
