@@ -119,7 +119,9 @@ public class HexWorld {
             for (int j = 0; j <HEIGHT ; j++) {
                 world[i][j] = Tileset.NOTHING;
             }
+
         }
+
 
 
         HexWorld HW = new HexWorld();
