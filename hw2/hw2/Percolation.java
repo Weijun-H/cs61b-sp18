@@ -1,6 +1,7 @@
 package hw2;
 
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
+
 import java.util.Set;
 import java.util.HashSet;
 
@@ -8,6 +9,7 @@ public class Percolation {
     private WeightedQuickUnionUF uf;
     private int N;
     private boolean[] status;
+    private int nOpen = 0;
     private boolean percolated = false;
     private Set<Integer> topFullIDs = new HashSet<>();
     private Set<Integer> bottomFullIDs = new HashSet<>();
@@ -58,7 +60,7 @@ public class Percolation {
             return;
         }
         status[indexIn1D] = true;
-        N += 1;
+        nOpen += 1;
         int id = uf.find(indexIn1D);
         if (indexIn1D < N){
             topFullIDs.add(id);
@@ -157,7 +159,7 @@ public class Percolation {
      * @return number of open sites
      */
     public int numberOfOpenSites(){
-        return N;
+        return nOpen;
     }
 
     /**
