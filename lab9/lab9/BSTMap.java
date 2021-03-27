@@ -1,5 +1,6 @@
 package lab9;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -46,14 +47,11 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     private V getHelper(K key, Node p) {
         if (p == null){
             return null;
-        }
-        if (p.key.compareTo(key)<0) {
+        }if (p.key.compareTo(key)<0) {
             return getHelper(key, p.right);
-        }
-        else if (p.key.compareTo(key)>0){
+        } else if (p.key.compareTo(key)>0){
             return getHelper(key, p.left);
-        }
-        else return p.value;
+        } else return p.value;
     }
 
     /** Returns the value to which the specified key is mapped, or null if this
@@ -108,7 +106,18 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     /* Returns a Set view of the keys contained in this map. */
     @Override
     public Set<K> keySet() {
-        throw new UnsupportedOperationException();
+        Set<K> container = new HashSet<>();
+        return keySet_helper(container, root);
+    }
+
+    public Set<K> keySet_helper(Set<K> K,Node p){
+        if (p == null) return null;
+        else {
+            K.add(p.key);
+            keySet_helper(K, p.left);
+            keySet_helper(K, p.right);
+        }
+        return K;
     }
 
     /** Removes KEY from the tree if present
