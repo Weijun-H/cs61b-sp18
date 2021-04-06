@@ -35,11 +35,9 @@ public class TestNiceSpreadOomage {
     public void testRandomOomagesHashCodeSpread() {
         List<Oomage> oomages = new ArrayList<>();
         int N = 10000;
-
         for (int i = 0; i < N; i += 1) {
             oomages.add(NiceSpreadOomage.randomNiceSpreadOomage());
         }
-
         assertTrue(OomageTestUtility.haveNiceHashCodeSpread(oomages, 10));
     }
 }

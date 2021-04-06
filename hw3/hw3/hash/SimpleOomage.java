@@ -18,7 +18,7 @@ public class SimpleOomage implements Oomage {
         if (o == this) return true;
         if (o == null) return false;
         if (o.getClass() != this.getClass()) return false;
-        SimpleOomage that = (SimpleOomage)o;
+        SimpleOomage that = (SimpleOomage) o;
         return (this.blue == that.blue) && (this.red == that.red) && (this.green == that.green);
     }
 
@@ -29,8 +29,14 @@ public class SimpleOomage implements Oomage {
             return red + green + blue;
         } else {
             // TODO: Write a perfect hash function for Simple Oomages.
-            return red + green * 31 + blue * 31 * 31;
-        }
+            int hash = 0;
+            int redCode = red < 5 ? -1 * red : red / 5;
+            int greenCode = green < 5 ? -1 * green : green / 5;
+            int blueCode = blue < 5 ? -1 * blue : blue / 5;
+            hash = hash * 256 + redCode;
+            hash = hash * 256 + greenCode;
+            hash = hash * 256 + blueCode;
+            return hash;        }
     }
 
     public SimpleOomage(int r, int g, int b) {
