@@ -3,7 +3,6 @@ import edu.princeton.cs.algs4.MinPQ;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 public class Solver {
@@ -14,7 +13,8 @@ public class Solver {
     private class Node implements Comparable{
         private WorldState state;
         private Node prev;
-        private int M;
+        private int M;      // the number of moves made to reach
+                            // this world state from the initial state
         private int E;
 
         public Node(int m, WorldState state, Node prev){
@@ -48,7 +48,6 @@ public class Solver {
             Node curr = pq.delMin();
             if (curr.E == 0) {
                 finish = curr;
-//                System.out.println(finish.state);
                 return;
             }
             for (WorldState neighbor : curr.state.neighbors()) {
