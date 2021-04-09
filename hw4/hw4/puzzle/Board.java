@@ -161,6 +161,16 @@ public class Board implements WorldState{
         return true;
     }
 
+    public int hashCode() {
+        int sum = 0;
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                sum = (sum + tiles[i][j]) * 31;
+            }
+        }
+        return sum;
+    }
+
     public String toString() {
         StringBuilder s = new StringBuilder();
         int N = size();
