@@ -17,8 +17,25 @@ public class MazeCycles extends MazeExplorer {
     @Override
     public void solve() {
         // TODO: Your code here!
+        dfs(0);
     }
 
     // Helper methods go here
+
+    private void dfs(int v){
+        marked[v] = true;
+        announce();
+        for (int w: maze.adj(v)){
+            if (marked[w]){
+                if (w != edgeTo[v])
+                    return;
+            }else{
+                edgeTo[w] = v;
+                announce();;
+                distTo[w] = distTo[v] + 1;
+                dfs(w);
+            }
+        }
+    }
 }
 
