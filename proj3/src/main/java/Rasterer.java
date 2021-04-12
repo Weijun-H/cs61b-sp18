@@ -9,9 +9,52 @@ import java.util.Map;
  */
 public class Rasterer {
 
+    private class QueryBox {
+        private double ullon, ullat, lrlon, lrlat;
+        private double w, h;
+
+        public QueryBox(double ullat, double ullon, double lrlat, double lrlon) {
+            this.ullon = ullon;
+            this.ullat = ullat;
+            this.lrlat = lrlat;
+            this.lrlon = lrlon;
+        }
+
+        public void setW(double w) {
+            this.w = w;
+        }
+
+        public void setH(double h) {
+            this.h = h;
+        }
+    }
+
+    private class Area {
+        private double ullon, ullat, lrlon, lrlat;
+
+        public Area(double ullat, double ullon, double lrlat, double lrlon) {
+            this.ullon = ullon;
+            this.ullat = ullat;
+            this.lrlat = lrlat;
+            this.lrlon = lrlon;
+        }
+    }
+    private int depth;
+    private double rasterUllon, rasterUllat, rasterLrlon, rasterLrlat;
+    private int ulx, uly, lrx, lry;
+    private String[][] filenames;
     public Rasterer() {
         // YOUR CODE HERE
     }
+
+    private int pow2(int n) {
+        int res = 1;
+        while (n-- > 0) {
+            res = res * 2;
+        }
+        return res;
+    }
+
 
     /**
      * Takes a user query and finds the grid of images that best matches the query. These
