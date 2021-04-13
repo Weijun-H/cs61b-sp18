@@ -1,3 +1,6 @@
+import org.junit.Test;
+
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,19 +30,49 @@ public class Rasterer {
         public void setH(double h) {
             this.h = h;
         }
+
+        public double calculateLonDPP(){
+            return (this.lrlon - this.ullon) / this.w;
+        }
     }
 
     private class Area {
         private double ullon, ullat, lrlon, lrlat;
-
+        /* status[0] --> left
+         * status[1] --> up
+         * status[2] --> right
+         * status[3] --> low */
+        public boolean[] status = new boolean[4];
+        public int leftIndex, upIndex, rightIndex, lowIndex;
         public Area(double ullat, double ullon, double lrlat, double lrlon) {
             this.ullon = ullon;
             this.ullat = ullat;
             this.lrlat = lrlat;
             this.lrlon = lrlon;
+
+            for (int i = 0; i < 4; i++) {
+                status[i] = false;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "Area{" +
+                    "ullon=" + ullon +
+                    ", ullat=" + ullat +
+                    ", lrlon=" + lrlon +
+                    ", lrlat=" + lrlat +
+                    ", status=" + Arrays.toString(status) +
+                    ", leftIndex=" + leftIndex +
+                    ", upIndex=" + upIndex +
+                    ", rightIndex=" + rightIndex +
+                    ", lowIndex=" + lowIndex +
+                    '}';
         }
     }
+
     private int depth;
+    private double LonDPP;
     private double rasterUllon, rasterUllat, rasterLrlon, rasterLrlat;
     private int ulx, uly, lrx, lry;
     private String[][] filenames;
@@ -47,14 +80,116 @@ public class Rasterer {
         // YOUR CODE HERE
     }
 
-    private int pow2(int n) {
-        int res = 1;
-        while (n-- > 0) {
-            res = res * 2;
+    private int pow2(int n){
+        int base = 2;
+        int tmp = 1;
+        for (int i = 0; i < n; i++) {
+            tmp *= base;
         }
-        return res;
+        return tmp;
     }
 
+    private void setDepth (QueryBox queryBox) {
+        double qLonDPP = queryBox.calculateLonDPP();
+        for (int i = 0; i <= 7; i++){
+            double LonDpp = calculateLonDPP(i);
+//            System.out.println("qLonDpp: " + qLonDPP);
+//            System.out.println("LonDPP: " + LonDpp);
+            if (qLonDPP > LonDpp){
+                this.depth = i;
+
+                return ;
+            }
+        }
+        this.depth = 7;
+    }
+
+    private double calculateLonDPP (int dep) {
+        double LonDpp = (MapServer.ROOT_LRLON - MapServer.ROOT_ULLON) / ((pow2(dep)) * MapServer.TILE_SIZE);
+        return LonDpp;
+    }
+
+    private Area getArea(QueryBox queryBox){
+        Area tmp = new Area(MapServer.ROOT_ULLON, MapServer.ROOT_LRLAT, MapServer.ROOT_LRLON, MapServer.ROOT_LRLAT);
+
+        double ullon = MapServer.ROOT_ULLON;
+        double ullat = MapServer.ROOT_ULLAT;
+
+        double lonPT = (MapServer.ROOT_LRLON - MapServer.ROOT_ULLON) / pow2(this.depth);
+        double latPT = (MapServer.ROOT_ULLAT - MapServer.ROOT_LRLAT) / pow2(this.depth);
+        for (int i = 0; i < pow2(this.depth); i++) {
+            // Calculate leftIndex
+            if (!tmp.status[0]) {
+                if (ullon + lonPT > queryBox.ullon && ullon <= queryBox.ullon) {
+                    tmp.status[0] = true;
+                    tmp.leftIndex = i;
+                    tmp.ullon = ullon;
+                }
+            }
+            // Calculate upIndex
+            if (!tmp.status[1]) {
+                if (ullat - latPT < queryBox.ullat && ullat > queryBox.ullat) {
+                    tmp.status[1] = true;
+                    tmp.upIndex = i;
+                    tmp.ullat = ullat;
+                }
+            }
+            // Calculate rightIndex
+            if (!tmp.status[2]) {
+                if (ullon + lonPT > queryBox.lrlon && ullon <= queryBox.lrlon) {
+                    tmp.status[2] = true;
+                    tmp.rightIndex = i;
+                    tmp.lrlon = ullon + lonPT;
+                }
+            }
+            // Calculate lowIndex
+            if (!tmp.status[3]) {
+                if (ullat - latPT <= queryBox.lrlat && ullat > queryBox.lrlat) {
+                    tmp.status[3] = true;
+                    tmp.lowIndex = i;
+                    tmp.lrlat = ullat - latPT;
+                }
+            }
+            ullon += lonPT;
+            ullat -= latPT;
+        }
+//        System.out.println("latPT:" + latPT);
+        return tmp;
+    }
+    private void getFilenames(Area stage){
+        filenames = new String[lry - uly + 1][lrx - ulx + 1];
+        for (int i = 0; i <= lry - uly; i++) {
+            for (int j = 0; j <= lrx - ulx; j++) {
+                filenames[i][j] = "d" + depth + "_x" + (ulx + j)
+                        + "_y" + (uly + i) + ".png";
+                System.out.print(filenames[i][j] + " ");
+            }
+            System.out.println("");
+        }
+    }
+
+    private void setArea(Area stage){
+        this.ulx = stage.leftIndex;
+        this.uly = stage.upIndex;
+        this.lrx = stage.rightIndex;
+        this.lry = stage.lowIndex;
+        this.rasterLrlat = stage.lrlat;
+        this.rasterLrlon = stage.lrlon;
+        this.rasterUllat = stage.ullat;
+        this.rasterUllon = stage.ullon;
+    }
+
+    private void solver(QueryBox queryBox) {
+        setDepth(queryBox);
+        this.LonDPP = calculateLonDPP(this.depth);
+        System.out.println(getArea(queryBox));
+        Area stage = getArea(queryBox);
+        setArea(stage);
+        getFilenames(stage);
+        System.out.println("depth: "+ this.depth);
+//        System.out.println("pow2: "+ pow2(this.depth));
+
+    }
 
     /**
      * Takes a user query and finds the grid of images that best matches the query. These
@@ -85,10 +220,26 @@ public class Rasterer {
      *                    forget to set this to true on success! <br>
      */
     public Map<String, Object> getMapRaster(Map<String, Double> params) {
-        // System.out.println(params);
+        System.out.println(params);
+
         Map<String, Object> results = new HashMap<>();
-        System.out.println("Since you haven't implemented getMapRaster, nothing is displayed in "
-                           + "your browser.");
+        double ullat = params.get("ullat");
+        double ullon = params.get("ullon");
+        double lrlat = params.get("lrlat");
+        double lrlon = params.get("lrlon");
+        QueryBox queryBox = new QueryBox(ullat, ullon, lrlat, lrlon);
+        queryBox.setH(params.get("h"));
+        queryBox.setW(params.get("w"));
+        solver(queryBox);
+        results.put("render_grid", filenames);
+        results.put("raster_ul_lon", rasterUllon);
+        results.put("raster_ul_lat", rasterUllat);
+        results.put("raster_lr_lon", rasterLrlon);
+        results.put("raster_lr_lat", rasterLrlat);
+        results.put("depth", depth);
+        results.put("query_success", true);
+//        System.out.println("Since you haven't implemented getMapRaster, nothing is displayed in "
+//                           + "your browser.");
         return results;
     }
 
