@@ -53,6 +53,9 @@ public class Rasterer {
             for (int i = 0; i < 4; i++) {
                 status[i] = false;
             }
+
+            leftIndex = upIndex = 0;
+            rightIndex = lowIndex = pow2(depth) - 1;
         }
 
         @Override
@@ -110,7 +113,7 @@ public class Rasterer {
     }
 
     private Area getArea(QueryBox queryBox){
-        Area tmp = new Area(MapServer.ROOT_ULLON, MapServer.ROOT_LRLAT, MapServer.ROOT_LRLON, MapServer.ROOT_LRLAT);
+        Area tmp = new Area(MapServer.ROOT_ULLAT, MapServer.ROOT_ULLON, MapServer.ROOT_LRLAT, MapServer.ROOT_LRLON);
 
         double ullon = MapServer.ROOT_ULLON;
         double ullat = MapServer.ROOT_ULLAT;
@@ -153,7 +156,6 @@ public class Rasterer {
             ullon += lonPT;
             ullat -= latPT;
         }
-//        System.out.println("latPT:" + latPT);
         return tmp;
     }
     private void getFilenames(Area stage){
@@ -162,9 +164,9 @@ public class Rasterer {
             for (int j = 0; j <= lrx - ulx; j++) {
                 filenames[i][j] = "d" + depth + "_x" + (ulx + j)
                         + "_y" + (uly + i) + ".png";
-                System.out.print(filenames[i][j] + " ");
+//                System.out.print(filenames[i][j] + " ");
             }
-            System.out.println("");
+//            System.out.println("");
         }
     }
 
@@ -182,11 +184,11 @@ public class Rasterer {
     private void solver(QueryBox queryBox) {
         setDepth(queryBox);
         this.LonDPP = calculateLonDPP(this.depth);
-        System.out.println(getArea(queryBox));
+//        System.out.println(getArea(queryBox));
         Area stage = getArea(queryBox);
         setArea(stage);
         getFilenames(stage);
-        System.out.println("depth: "+ this.depth);
+//        System.out.println("depth: "+ this.depth);
 //        System.out.println("pow2: "+ pow2(this.depth));
 
     }
@@ -238,6 +240,7 @@ public class Rasterer {
         results.put("raster_lr_lat", rasterLrlat);
         results.put("depth", depth);
         results.put("query_success", true);
+//        System.out.println(results);
 //        System.out.println("Since you haven't implemented getMapRaster, nothing is displayed in "
 //                           + "your browser.");
         return results;
