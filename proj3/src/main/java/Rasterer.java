@@ -1,5 +1,3 @@
-import org.junit.Test;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +29,7 @@ public class Rasterer {
             this.h = h;
         }
 
-        public double calculateLonDPP(){
+        public double calculateLonDPP() {
             return (this.lrlon - this.ullon) / this.w;
         }
     }
