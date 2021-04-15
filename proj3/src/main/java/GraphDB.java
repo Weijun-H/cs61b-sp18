@@ -6,7 +6,7 @@ import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * Graph for storing all of the intersection (vertex) and road (edge) information.
@@ -20,6 +20,27 @@ import java.util.ArrayList;
 public class GraphDB {
     /** Your instance variables for storing the graph. You should consider
      * creating helper classes, e.g. Node, Edge, etc. */
+    private class Node {
+        private final double lon, lat;
+        private final long id;
+        public Node(int id, double lon, double lat) {
+            this.id = id;
+            this.lon = lon;
+            this.lat = lat;
+        }
+
+        public long getId() {
+            return this.id;
+        }
+    }
+
+    private class Edge {
+    }
+
+    private HashMap<Node, TreeSet<Node>> adj;
+    private HashMap<Long, Node> V;
+    private int numEdges;
+    private int numVertices;
 
     /**
      * Example constructor shows how to create and start an XML parser.
@@ -58,6 +79,11 @@ public class GraphDB {
      */
     private void clean() {
         // TODO: Your code here.
+
+        numEdges = 0;
+        numVertices = 0;
+        adj.clear();
+        V.clear();
     }
 
     /**
@@ -66,7 +92,7 @@ public class GraphDB {
      */
     Iterable<Long> vertices() {
         //YOUR CODE HERE, this currently returns only an empty list.
-        return new ArrayList<Long>();
+        return V.keySet();
     }
 
     /**
@@ -75,7 +101,11 @@ public class GraphDB {
      * @return An iterable of the ids of the neighbors of v.
      */
     Iterable<Long> adjacent(long v) {
-        return null;
+        ArrayList<Long> vList = new ArrayList<Long>();
+        for (Node i: adj.get(v)){
+            vList.add(i.getId());
+        }
+        return vList;
     }
 
     /**
@@ -156,4 +186,43 @@ public class GraphDB {
     double lat(long v) {
         return 0;
     }
+
+    void addEdge(Long a, Long b) {
+        Node n1 = V.get(a);
+        Node n2 = V.get(b);
+        if (adj.containsKey(n1)){
+            adj.get(n1).add(n2);
+        }else{
+            TreeSet<Node> treeSet = new TreeSet<>();
+            treeSet.add(n2);
+            adj.put(n1, treeSet);
+        }
+        if (adj.containsKey(n2)){
+            adj.get(n2).add(n1);
+        }else{
+            TreeSet<Node> treeSet = new TreeSet<>();
+            treeSet.add(n1);
+            adj.put(n2, treeSet);
+        }
+    }
+
+    void addNode(Node a) {
+        if (!V.containsKey(a.getId())) {
+            V.put(a.getId(), a);
+        }
+    }
+
+    void removeNode(Long id) {
+        Node n;
+        if (V.containsKey(id)){
+            n = V.remove(id);
+            if (adj.containsKey(n)){
+                for (Node i: adj.get(n)) {
+                    adj.get(i).remove(n);
+                }
+            }
+            adj.remove(n);
+        }
+    }
+
 }
