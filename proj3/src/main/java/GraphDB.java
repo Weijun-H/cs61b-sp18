@@ -6,6 +6,7 @@ import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.stream.events.EntityDeclaration;
 import java.util.*;
 
 /**
@@ -18,12 +19,16 @@ import java.util.*;
  * @author Alan Yao, Josh Hug
  */
 public class GraphDB {
-    /** Your instance variables for storing the graph. You should consider
-     * creating helper classes, e.g. Node, Edge, etc. */
-    private class Node {
+    /**
+     * Your instance variables for storing the graph. You should consider
+     * creating helper classes, e.g. Node, Edge, etc.
+     */
+    public static class Node {
         private final double lon, lat;
         private final long id;
-        public Node(int id, double lon, double lat) {
+        private String location;
+
+        public Node(long id, double lon, double lat) {
             this.id = id;
             this.lon = lon;
             this.lat = lat;
@@ -32,19 +37,51 @@ public class GraphDB {
         public long getId() {
             return this.id;
         }
+
+        public double getLat() {
+            return lat;
+        }
+
+        public double getLon() {
+            return lon;
+        }
+
+        public void setLocation(String location) {
+            this.location = location;
+        }
     }
 
-    private class Edge {
+    public static class Edge {
+        private long id;
+        private boolean valid;
+//        private int maxSpeed;
+        private String name;
+        public Edge(long id) {
+            this.id = id;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public void setId(long id) {
+            this.id = id;
+        }
+
+        public void setValid(boolean valid) {
+            this.valid = valid;
+        }
     }
 
-    private HashMap<Node, TreeSet<Node>> adj;
-    private HashMap<Long, Node> V;
+    private Map<Node, TreeSet<Node>> adj = new HashMap<>();
+    private Map<Long, Node> V = new HashMap<>();
     private int numEdges;
     private int numVertices;
 
     /**
      * Example constructor shows how to create and start an XML parser.
      * You do not need to modify this constructor, but you're welcome to do so.
+     *
      * @param dbPath Path to the XML file to be parsed.
      */
     public GraphDB(String dbPath) {
@@ -65,6 +102,7 @@ public class GraphDB {
 
     /**
      * Helper to process strings into their "cleaned" form, ignoring punctuation and capitalization.
+     *
      * @param s Input string.
      * @return Cleaned string.
      */
@@ -73,9 +111,9 @@ public class GraphDB {
     }
 
     /**
-     *  Remove nodes with no connections from the graph.
-     *  While this does not guarantee that any two nodes in the remaining graph are connected,
-     *  we can reasonably assume this since typically roads are connected.
+     * Remove nodes with no connections from the graph.
+     * While this does not guarantee that any two nodes in the remaining graph are connected,
+     * we can reasonably assume this since typically roads are connected.
      */
     private void clean() {
         // TODO: Your code here.
@@ -88,6 +126,7 @@ public class GraphDB {
 
     /**
      * Returns an iterable of all vertex IDs in the graph.
+     *
      * @return An iterable of id's of all vertices in the graph.
      */
     Iterable<Long> vertices() {
@@ -97,12 +136,13 @@ public class GraphDB {
 
     /**
      * Returns ids of all vertices adjacent to v.
+     *
      * @param v The id of the vertex we are looking adjacent to.
      * @return An iterable of the ids of the neighbors of v.
      */
     Iterable<Long> adjacent(long v) {
         ArrayList<Long> vList = new ArrayList<Long>();
-        for (Node i: adj.get(v)){
+        for (Node i : adj.get(v)) {
             vList.add(i.getId());
         }
         return vList;
@@ -112,6 +152,7 @@ public class GraphDB {
      * Returns the great-circle distance between vertices v and w in miles.
      * Assumes the lon/lat methods are implemented properly.
      * <a href="https://www.movable-type.co.uk/scripts/latlong.html">Source</a>.
+     *
      * @param v The id of the first vertex.
      * @param w The id of the second vertex.
      * @return The great-circle distance between the two locations from the graph.
@@ -139,6 +180,7 @@ public class GraphDB {
      * end point.
      * Assumes the lon/lat methods are implemented properly.
      * <a href="https://www.movable-type.co.uk/scripts/latlong.html">Source</a>.
+     *
      * @param v The id of the first vertex.
      * @param w The id of the second vertex.
      * @return The initial bearing between the vertices.
@@ -161,6 +203,7 @@ public class GraphDB {
 
     /**
      * Returns the vertex closest to the given longitude and latitude.
+     *
      * @param lon The target longitude.
      * @param lat The target latitude.
      * @return The id of the node in the graph closest to the target.
@@ -171,58 +214,80 @@ public class GraphDB {
 
     /**
      * Gets the longitude of a vertex.
+     *
      * @param v The id of the vertex.
      * @return The longitude of the vertex.
      */
     double lon(long v) {
-        return 0;
+        if (V.containsKey(v)) {
+            return V.get(v).getLon();
+        } else {
+            throw new NullPointerException();
+        }
     }
 
     /**
      * Gets the latitude of a vertex.
+     *
      * @param v The id of the vertex.
      * @return The latitude of the vertex.
      */
     double lat(long v) {
-        return 0;
+        if (V.containsKey(v)) {
+            return V.get(v).getLat();
+        } else {
+            throw new NullPointerException();
+        }
     }
 
     void addEdge(Long a, Long b) {
         Node n1 = V.get(a);
         Node n2 = V.get(b);
-        if (adj.containsKey(n1)){
+        if (adj.containsKey(n1)) {
             adj.get(n1).add(n2);
-        }else{
+        } else {
             TreeSet<Node> treeSet = new TreeSet<>();
             treeSet.add(n2);
             adj.put(n1, treeSet);
         }
-        if (adj.containsKey(n2)){
+        if (adj.containsKey(n2)) {
             adj.get(n2).add(n1);
-        }else{
+        } else {
             TreeSet<Node> treeSet = new TreeSet<>();
             treeSet.add(n1);
             adj.put(n2, treeSet);
         }
+        numEdges++;
     }
 
     void addNode(Node a) {
         if (!V.containsKey(a.getId())) {
             V.put(a.getId(), a);
+            numVertices++;
         }
     }
 
     void removeNode(Long id) {
         Node n;
-        if (V.containsKey(id)){
+        if (V.containsKey(id)) {
             n = V.remove(id);
-            if (adj.containsKey(n)){
-                for (Node i: adj.get(n)) {
+            if (adj.containsKey(n)) {
+                for (Node i : adj.get(n)) {
                     adj.get(i).remove(n);
                 }
             }
             adj.remove(n);
+            numEdges--;
         }
     }
 
+    public void connectNd(List<Long> ndList) {
+        Node n1 = V.get(ndList.get(0));
+        Node n2;
+        for (int i = 1; i < ndList.size(); i++) {
+            n2 = V.get(ndList.get(i));
+            addEdge(n1.getId(), n2.getId());
+            n1 = n2;
+        }
+    }
 }
