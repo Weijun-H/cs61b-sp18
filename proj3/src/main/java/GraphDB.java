@@ -23,7 +23,7 @@ public class GraphDB {
      * Your instance variables for storing the graph. You should consider
      * creating helper classes, e.g. Node, Edge, etc.
      */
-    public static class Node {
+    public  class Node {
         private final double lon, lat;
         private final long id;
         private String location;
@@ -51,13 +51,17 @@ public class GraphDB {
         }
     }
 
-    public static class Edge {
+    public  class Edge {
         private long id;
         private boolean valid;
 //        private int maxSpeed;
         private String name;
         public Edge(long id) {
             this.id = id;
+        }
+
+        public long getId() {
+            return id;
         }
 
         public void setName(String name) {
@@ -71,10 +75,15 @@ public class GraphDB {
         public void setValid(boolean valid) {
             this.valid = valid;
         }
+
+        public boolean isValid() {
+            return valid;
+        }
     }
 
-    private Map<Node, TreeSet<Node>> adj = new HashMap<>();
+    private Map<Node, HashSet<Node>> adj = new HashMap<>();
     private Map<Long, Node> V = new HashMap<>();
+    private Map<Long, Edge> E = new HashMap<>();
     private int numEdges;
     private int numVertices;
 
@@ -117,12 +126,17 @@ public class GraphDB {
      */
     private void clean() {
         // TODO: Your code here.
-
-        numEdges = 0;
-        numVertices = 0;
-        adj.clear();
-        V.clear();
+        List<Long> alones = new ArrayList<>();
+        for (Node node : V.values()) {
+            if (!adj.containsKey(node)){
+                alones.add(node.getId());
+            }
+        }
+        for (long i : alones){
+            V.remove(i);
+        }
     }
+
 
     /**
      * Returns an iterable of all vertex IDs in the graph.
@@ -131,6 +145,7 @@ public class GraphDB {
      */
     Iterable<Long> vertices() {
         //YOUR CODE HERE, this currently returns only an empty list.
+
         return V.keySet();
     }
 
@@ -142,7 +157,7 @@ public class GraphDB {
      */
     Iterable<Long> adjacent(long v) {
         ArrayList<Long> vList = new ArrayList<Long>();
-        for (Node i : adj.get(v)) {
+        for (Node i : adj.get(V.get(v))) {
             vList.add(i.getId());
         }
         return vList;
@@ -209,7 +224,21 @@ public class GraphDB {
      * @return The id of the node in the graph closest to the target.
      */
     long closest(double lon, double lat) {
-        return 0;
+        Node closestNode = null;
+        double min = distance(MapServer.ROOT_ULLON, MapServer.ROOT_ULLAT,
+                MapServer.ROOT_LRLON, MapServer.ROOT_LRLAT) + 1000;
+        for (Node i: V.values()){
+            if (closestNode == null){
+                closestNode = i;
+                continue;
+            }
+            double dis = distance(i.lon, i.lat, lon, lat);
+            if (dis < min) {
+                min = dis;
+                closestNode = i;
+            }
+        }
+        return closestNode.getId();
     }
 
     /**
@@ -240,20 +269,20 @@ public class GraphDB {
         }
     }
 
-    void addEdge(Long a, Long b) {
+    void addAdj(Long a, Long b) {
         Node n1 = V.get(a);
         Node n2 = V.get(b);
         if (adj.containsKey(n1)) {
             adj.get(n1).add(n2);
         } else {
-            TreeSet<Node> treeSet = new TreeSet<>();
+            HashSet<Node> treeSet = new HashSet<Node>();
             treeSet.add(n2);
             adj.put(n1, treeSet);
         }
         if (adj.containsKey(n2)) {
             adj.get(n2).add(n1);
         } else {
-            TreeSet<Node> treeSet = new TreeSet<>();
+            HashSet<Node> treeSet = new HashSet<Node>();
             treeSet.add(n1);
             adj.put(n2, treeSet);
         }
@@ -281,13 +310,18 @@ public class GraphDB {
         }
     }
 
-    public void connectNd(List<Long> ndList) {
+    public void connectNd(List<Long> ndList, Edge edge) {
+        E.put(edge.getId(), edge);
         Node n1 = V.get(ndList.get(0));
         Node n2;
         for (int i = 1; i < ndList.size(); i++) {
             n2 = V.get(ndList.get(i));
-            addEdge(n1.getId(), n2.getId());
+            addAdj(n1.getId(), n2.getId());
             n1 = n2;
         }
+    }
+
+    public int getNumVertices() {
+        return numVertices;
     }
 }

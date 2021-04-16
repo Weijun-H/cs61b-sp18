@@ -35,7 +35,7 @@ public class GraphBuildingHandler extends DefaultHandler {
                     "residential", "living_street", "motorway_link", "trunk_link", "primary_link",
                     "secondary_link", "tertiary_link"));
     private String activeState = "";
-    private final GraphDB g;
+    private GraphDB g;
     private GraphDB.Edge way;
     private GraphDB.Node lastNode;
     private List<Long> ndList = new ArrayList<>();
@@ -77,14 +77,14 @@ public class GraphBuildingHandler extends DefaultHandler {
             long id = Long.parseLong(attributes.getValue("id"));
             double lon = Double.parseDouble(attributes.getValue("lon"));
             double lat = Double.parseDouble(attributes.getValue("lat"));
-            GraphDB.Node node = new GraphDB.Node(id, lon, lat);
+            GraphDB.Node node = g.new Node(id, lon, lat);
             g.addNode(node);
             lastNode = node;
         } else if (qName.equals("way")) {
             /* We encountered a new <way...> tag. */
             activeState = "way";
             long id = Long.parseLong(attributes.getValue("id"));
-            way = new GraphDB.Edge(id);
+            way = g.new Edge(id);
             //System.out.println("Beginning a way...");
         } else if (activeState.equals("way") && qName.equals("nd")) {
             /* While looking at a way, we found a <nd...> tag. */
@@ -125,7 +125,7 @@ public class GraphBuildingHandler extends DefaultHandler {
             /* Hint: Since we found this <tag...> INSIDE a node, we should probably remember which
             node this tag belongs to. Remember XML is parsed top-to-bottom, so probably it's the
             last node that you looked at (check the first if-case). */
-            System.out.println("Node's name: " + attributes.getValue("v"));
+//            System.out.println("Node's name: " + attributes.getValue("v"));
             lastNode.setLocation(attributes.getValue("v"));
 
         }
@@ -149,6 +149,10 @@ public class GraphBuildingHandler extends DefaultHandler {
             /* Hint1: If you have stored the possible connections for this way, here's your
             chance to actually connect the nodes together if the way is valid. */
 //            System.out.println("Finishing a way...");
+            if (way.isValid()) {
+               g.connectNd(ndList, way);
+            }
+            ndList.clear();
         }
     }
 
