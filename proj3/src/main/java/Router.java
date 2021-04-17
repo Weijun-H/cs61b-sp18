@@ -1,7 +1,12 @@
-import java.util.List;
-import java.util.Objects;
+import org.junit.Test;
+
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.PriorityQueue;
+
 
 /**
  * This class provides a shortestPath method for finding routes between two points
@@ -12,6 +17,38 @@ import java.util.regex.Pattern;
  * down to the priority you use to order your vertices.
  */
 public class Router {
+
+    private static class Status {
+        private GraphDB.Node node;
+        private double priority;
+
+        public Status(GraphDB.Node node, double priority) {
+            this.node = node;
+            this.priority = priority;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Status status = (Status) o;
+            return this.node.getId() == status.node.getId();
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(node.getId());
+        }
+    }
+    private static class StatusComparator implements Comparator {
+        @Override
+        public int compare(Object o1, Object o2) {
+            Status s1 = (Status) o1;
+            Status s2 = (Status) o2;
+            return Double.compare(s1.priority, s2.priority);
+        }
+    }
+
     /**
      * Return a List of longs representing the shortest path from the node
      * closest to a start location and the node closest to the destination
@@ -25,7 +62,57 @@ public class Router {
      */
     public static List<Long> shortestPath(GraphDB g, double stlon, double stlat,
                                           double destlon, double destlat) {
-        return null; // FIXME
+        List<Long> res = new ArrayList<>();
+        HashMap<Long, Double> disTO = new HashMap<>();
+        HashMap<Long, Long> edgeTo = new HashMap<>();
+        Set<Long> marked = new HashSet<>();
+        PriorityQueue<Status> pq = new PriorityQueue<>(new StatusComparator());
+        GraphDB.Node start = g.getNode(g.closest(stlon,stlat));
+        GraphDB.Node target = g.getNode(g.closest(destlon,destlat));
+        double dis = 0.0;
+        double h = g.distance(start.getId(), target.getId());
+        disTO.put(start.getId(), dis);
+        pq.add(new Status(start, dis + h));
+        while (!pq.isEmpty()){
+            Status curr = pq.poll();
+            long currId = curr.node.getId();
+
+            marked.add(currId);
+
+            if (currId == target.getId()){
+                System.out.println("Bingo!!!");
+                break;
+            }
+            for (GraphDB.Node node : g.getNeighbors(currId)){
+                if (!marked.contains(node.getId())){
+                    h = g.distance(node.getId(), target.getId());
+                    dis = disTO.get(currId) + g.distance(currId, node.getId());
+                }
+                if (!disTO.containsKey(node.getId()) || dis < disTO.get(node.getId())){
+                    disTO.put(node.getId(), dis);
+                    edgeTo.put(node.getId(), currId);
+                    Status neighbor = new Status(node, 0); //
+                    pq.remove(neighbor);
+                    pq.add(new Status(node, disTO.get(node.getId()) + h));
+                }
+            }
+
+        }
+        long tmp = target.getId();
+//        System.out.println("start: " + start.getId());
+//        System.out.println("target: " + target.getId());
+
+        while (tmp != start.getId()) {
+            System.out.println(tmp);
+            if (res.contains(tmp)){
+                break;
+            }
+            res.add(tmp);
+            tmp = edgeTo.get(tmp);
+        }
+        res.add(start.getId());
+        Collections.reverse(res);
+        return res;
     }
 
     /**

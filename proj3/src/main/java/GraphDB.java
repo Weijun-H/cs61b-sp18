@@ -6,7 +6,6 @@ import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import javax.xml.stream.events.EntityDeclaration;
 import java.util.*;
 
 /**
@@ -48,6 +47,22 @@ public class GraphDB {
 
         public void setLocation(String location) {
             this.location = location;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Node node = (Node) o;
+            return Double.compare(node.lon, lon) == 0 &&
+                    Double.compare(node.lat, lat) == 0 &&
+                    id == node.id &&
+                    Objects.equals(location, node.location);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(lon, lat, id, location);
         }
     }
 
@@ -226,14 +241,10 @@ public class GraphDB {
     long closest(double lon, double lat) {
         Node closestNode = null;
         double min = distance(MapServer.ROOT_ULLON, MapServer.ROOT_ULLAT,
-                MapServer.ROOT_LRLON, MapServer.ROOT_LRLAT) + 1000;
+                MapServer.ROOT_LRLON, MapServer.ROOT_LRLAT) + 10000;
         for (Node i: V.values()){
-            if (closestNode == null){
-                closestNode = i;
-                continue;
-            }
             double dis = distance(i.lon, i.lat, lon, lat);
-            if (dis < min) {
+            if (dis <= min) {
                 min = dis;
                 closestNode = i;
             }
@@ -323,5 +334,13 @@ public class GraphDB {
 
     public int getNumVertices() {
         return numVertices;
+    }
+
+    public Node getNode(long id) {
+        return V.get(id);
+    }
+
+    Iterable<Node> getNeighbors(long id){
+        return this.adj.get(V.get(id));
     }
 }
