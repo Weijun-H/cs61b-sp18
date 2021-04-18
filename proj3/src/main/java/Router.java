@@ -85,7 +85,7 @@ public class Router {
             /* Reach destination*/
             if (currId == target.getId()){
 //                System.out.println("Bingo!!!");
-                break;
+//                break;
             }
             /* Update neighbors */
             for (GraphDB.Node node : g.getNeighbors(currId)){
@@ -93,7 +93,6 @@ public class Router {
                 if (!marked.contains(node.getId())){
                     h = g.distance(node.getId(), target.getId());
                     dis = disTO.get(currId) + g.distance(currId, node.getId());
-                    if (node.getId() == 53124567) continue;
                     /* Find an more optimum way */
                     if (!disTO.containsKey(node.getId()) || dis < disTO.get(node.getId())){
                         disTO.put(node.getId(), dis);
