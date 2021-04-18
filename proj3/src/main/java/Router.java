@@ -70,7 +70,8 @@ public class Router {
         GraphDB.Node start = g.getNode(g.closest(stlon,stlat));
         GraphDB.Node target = g.getNode(g.closest(destlon,destlat));
         double dis = 0.0;
-        double h = g.distance(start.getId(), target.getId());
+//        double h = g.distance(start.getId(), target.getId());
+        double h = 0;
         disTO.put(start.getId(), dis);
         pq.add(new Status(start, dis + h));
         while (!pq.isEmpty()){
@@ -80,14 +81,15 @@ public class Router {
             marked.add(currId);
 
             if (currId == target.getId()){
-                System.out.println("Bingo!!!");
+//                System.out.println("Bingo!!!");
                 break;
             }
             for (GraphDB.Node node : g.getNeighbors(currId)){
                 if (!marked.contains(node.getId())){
-                    h = g.distance(node.getId(), target.getId());
+//                    h = g.distance(node.getId(), target.getId());
                     dis = disTO.get(currId) + g.distance(currId, node.getId());
                 }
+
                 if (!disTO.containsKey(node.getId()) || dis < disTO.get(node.getId())){
                     disTO.put(node.getId(), dis);
                     edgeTo.put(node.getId(), currId);
@@ -103,7 +105,7 @@ public class Router {
 //        System.out.println("target: " + target.getId());
 
         while (tmp != start.getId()) {
-            System.out.println(tmp);
+//            System.out.println(tmp);
             if (res.contains(tmp)){
                 break;
             }

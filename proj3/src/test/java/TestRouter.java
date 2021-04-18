@@ -33,6 +33,11 @@ public class TestRouter {
         List<Map<String, Double>> testParams = paramsFromFile();
         List<List<Long>> expectedResults = resultsFromFile();
 
+        double d1 = graph.distance(760706748,3178363987L);
+
+        double d2 = graph.distance(760706748,3386879838L);
+
+
         for (int i = 0; i < NUM_TESTS; i++) {
             System.out.println(String.format("Running test: %d", i));
             Map<String, Double> params = testParams.get(i);
