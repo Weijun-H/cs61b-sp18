@@ -70,33 +70,37 @@ public class Router {
         PriorityQueue<Status> pq = new PriorityQueue<>(new StatusComparator());
         GraphDB.Node start = g.getNode(g.closest(stlon,stlat));
         GraphDB.Node target = g.getNode(g.closest(destlon,destlat));
+
+        /* Initialize start node. */
         double dis = 0.0;
         double h = g.distance(start.getId(), target.getId());
 //        double h = 0;
         disTO.put(start.getId(), dis);
         pq.add(new Status(start, dis + h));
+        /* Start Search*/
         while (!pq.isEmpty()){
             Status curr = pq.poll();
             long currId = curr.node.getId();
-
             marked.add(currId);
-
+            /* Reach destination*/
             if (currId == target.getId()){
 //                System.out.println("Bingo!!!");
                 break;
             }
+            /* Update neighbors */
             for (GraphDB.Node node : g.getNeighbors(currId)){
+                /* This spot has not been reached. */
                 if (!marked.contains(node.getId())){
                     h = g.distance(node.getId(), target.getId());
                     dis = disTO.get(currId) + g.distance(currId, node.getId());
-                }
-
-                if (!disTO.containsKey(node.getId()) || dis < disTO.get(node.getId())){
-                    disTO.put(node.getId(), dis);
-                    edgeTo.put(node.getId(), currId);
-                    Status neighbor = new Status(node, 0); //
-                    pq.remove(neighbor);
-                    pq.add(new Status(node, disTO.get(node.getId()) + h));
+                    /* Find an more optimum way */
+                    if (!disTO.containsKey(node.getId()) || dis < disTO.get(node.getId())){
+                        disTO.put(node.getId(), dis);
+                        edgeTo.put(node.getId(), currId);
+                        Status neighbor = new Status(node, 0);
+                        pq.remove(neighbor);
+                        pq.add(new Status(node, disTO.get(node.getId()) + h ) );
+                    }
                 }
             }
 
