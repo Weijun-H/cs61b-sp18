@@ -16,6 +16,7 @@ import java.util.PriorityQueue;
  * The difference between A* and Dijkstra's is only a couple of lines of code, and boils
  * down to the priority you use to order your vertices.
  */
+
 public class Router {
 
     private static class Status {
@@ -40,11 +41,11 @@ public class Router {
             return Objects.hash(node.getId());
         }
     }
-    private static class StatusComparator implements Comparator {
-        @Override
-        public int compare(Object o1, Object o2) {
-            Status s1 = (Status) o1;
-            Status s2 = (Status) o2;
+
+    private static class StatusComparator implements Comparator<Status> {
+        public int compare(Status o1, Status o2) {
+            Router.Status s1 = o1;
+            Router.Status s2 = o2;
             return Double.compare(s1.priority, s2.priority);
         }
     }
@@ -70,8 +71,8 @@ public class Router {
         GraphDB.Node start = g.getNode(g.closest(stlon,stlat));
         GraphDB.Node target = g.getNode(g.closest(destlon,destlat));
         double dis = 0.0;
-//        double h = g.distance(start.getId(), target.getId());
-        double h = 0;
+        double h = g.distance(start.getId(), target.getId());
+//        double h = 0;
         disTO.put(start.getId(), dis);
         pq.add(new Status(start, dis + h));
         while (!pq.isEmpty()){
@@ -86,7 +87,7 @@ public class Router {
             }
             for (GraphDB.Node node : g.getNeighbors(currId)){
                 if (!marked.contains(node.getId())){
-//                    h = g.distance(node.getId(), target.getId());
+                    h = g.distance(node.getId(), target.getId());
                     dis = disTO.get(currId) + g.distance(currId, node.getId());
                 }
 
