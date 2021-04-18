@@ -93,6 +93,7 @@ public class Router {
                 if (!marked.contains(node.getId())){
                     h = g.distance(node.getId(), target.getId());
                     dis = disTO.get(currId) + g.distance(currId, node.getId());
+                    if (node.getId() == 53124567) continue;
                     /* Find an more optimum way */
                     if (!disTO.containsKey(node.getId()) || dis < disTO.get(node.getId())){
                         disTO.put(node.getId(), dis);
@@ -103,7 +104,6 @@ public class Router {
                     }
                 }
             }
-
         }
         long tmp = target.getId();
 //        System.out.println("start: " + start.getId());
