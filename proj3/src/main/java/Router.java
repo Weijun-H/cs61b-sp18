@@ -133,38 +133,47 @@ public class Router {
         List<NavigationDirection> res = new ArrayList<>();
         GraphDB.Node node1 = null;
         GraphDB.Node node2 = null;
-        int flagChange = 0;
+        GraphDB.Node prevNode = null;
+        int flagTurn = 0;
         int flagStart = 1;
-        double disAccumulation = 0;
         int direction1 = -1, direction2;
         NavigationDirection ND = new NavigationDirection();
         for (long id: route) {
             if (node1 == null) {
                 node1 = g.getNode(id);
+                prevNode = node1;
                 continue;
             }
             node2 = g.getNode(id);
             double dis = g.distance(node1.getId(),node2.getId());
             direction2 = findDirection(g.bearing(node1.getId(), node2.getId()));
+
+            /* initialize the start node */
             if (flagStart == 1) {
                 direction1 = findDirection(g.bearing(node1.getId(), node2.getId()));
                 ND.direction = 0;
                 ND.distance = dis;
+                ND.way = g.getWayName(node1);
                 res.add(ND);
-                flagStart = 0;
+                flagStart = 2;
                 node1 = node2;
                 continue;
-            } else if (direction2 == direction1) {
-                updateWay(res, dis);
+            } else if (direction2 == direction1 || res.get(res.size()-1).way.equals(g.getWayName(node2))) {
+                updateWay(res, dis, prevNode, node2, flagStart);
             } else {
                 ND = new NavigationDirection();
                 ND.distance = dis;
-                ND.direction = direction2;
+                ND.way = g.getWayName(node2);
+                ND.direction = findDirection(GraphDB.bearing(prevNode.getLon(), prevNode.getLat(), node2.getLon(), node2.getLat()));
+//                if (flagStart != 2) {
+//                    updateDirection(res, (GraphDB.bearing(prevNode.getLon(), prevNode.getLat(), node2.getLon(), node2.getLat())), g.bearing(node1.getId(), node2.getId()));
+//                }
+                flagStart = 0;
+                prevNode = node1;
                 res.add(ND);
             }
             direction1 = direction2;
             node1 = node2;
-
         }
         System.out.println(res.toString());
         System.out.println(res.size());
@@ -181,7 +190,7 @@ public class Router {
                     res = degree < 0 ? 2 : 3;
                 }
             } else {
-                res = degree < 0 ? 5 : 4;
+                res = degree < 0 ? 4 : 5;
             }
         } else {
             res = degree < 0 ? 6 : 7;
@@ -189,10 +198,23 @@ public class Router {
         return res;
     }
 
-    public static void updateWay(List<NavigationDirection> res, double dis) {
+    public static void updateWay(List<NavigationDirection> res, double dis, GraphDB.Node prev, GraphDB.Node currNode, int flag) {
         int index = res.size() - 1;
         NavigationDirection nd = res.get(index);
+        double deg = GraphDB.bearing(prev.getLon(), prev.getLat(), currNode.getLon(), currNode.getLat());
+        if (flag != 2){
+            nd.direction = findDirection(deg);
+        }
+//        nd.distance = GraphDB.distance(prev.getLon(), prev.getLat(), currNode.getLon(), currNode.getLat());
         nd.distance += dis;
+        res.remove(index);
+        res.add(nd);
+    }
+
+    public static void updateDirection(List<NavigationDirection> res, double prevD, double currD) {
+        int index = res.size() - 1;
+        NavigationDirection nd = res.get(index);
+        nd.direction = (findDirection(currD - prevD));
         res.remove(index);
         res.add(nd);
     }

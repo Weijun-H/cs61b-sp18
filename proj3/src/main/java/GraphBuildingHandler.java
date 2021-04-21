@@ -151,6 +151,7 @@ public class GraphBuildingHandler extends DefaultHandler {
 //            System.out.println("Finishing a way...");
             if (way.isValid()) {
                g.connectNd(ndList, way);
+
             }
             ndList.clear();
         }

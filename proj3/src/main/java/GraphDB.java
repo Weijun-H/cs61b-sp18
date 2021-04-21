@@ -68,11 +68,13 @@ public class GraphDB {
 
     public  class Edge {
         private long id;
+        private HashSet<Long> nodeList = new HashSet<>();
         private boolean valid;
 //        private int maxSpeed;
         private String name;
         public Edge(long id) {
             this.id = id;
+            name = "X";
         }
 
         public long getId() {
@@ -93,6 +95,10 @@ public class GraphDB {
 
         public boolean isValid() {
             return valid;
+        }
+
+        public void addNode (long id) {
+            nodeList.add(id);
         }
     }
 
@@ -149,6 +155,15 @@ public class GraphDB {
         }
         for (long i : alones){
             V.remove(i);
+        }
+        alones.clear();
+        for (Edge e: E.values()) {
+            if (!e.isValid() | e.nodeList.size() <= 1) {
+                alones.add(e.id);
+            }
+        }
+        for (long i : alones){
+            E.remove(i);
         }
     }
 
@@ -325,9 +340,11 @@ public class GraphDB {
         E.put(edge.getId(), edge);
         Node n1 = V.get(ndList.get(0));
         Node n2;
+        edge.addNode(n1.getId());
         for (int i = 1; i < ndList.size(); i++) {
             n2 = V.get(ndList.get(i));
             addAdj(n1.getId(), n2.getId());
+            edge.addNode(n2.getId());
             n1 = n2;
         }
     }
@@ -342,5 +359,14 @@ public class GraphDB {
 
     Iterable<Node> getNeighbors(long id){
         return this.adj.get(V.get(id));
+    }
+
+    public String getWayName(Node node) {
+        for ( Edge e: E.values()) {
+            if (e.nodeList.contains(node.getId())) {
+                return e.name;
+            }
+        }
+        return "XXX";
     }
 }
