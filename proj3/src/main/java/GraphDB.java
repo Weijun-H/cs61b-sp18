@@ -153,15 +153,15 @@ public class GraphDB {
     private void clean() {
         // TODO: Your code here.
         List<Long> alones = new ArrayList<>();
-        for (Node node : V.values()) {
-            if (!adj.containsKey(node)){
-                alones.add(node.getId());
-            }
-        }
-        for (long i : alones){
-            V.remove(i);
-        }
-        alones.clear();
+//        for (Node node : V.values()) {
+//            if (!adj.containsKey(node)){
+//                alones.add(node.getId());
+//            }
+//        }
+//        for (long i : alones){
+//            V.remove(i);
+//        }
+//        alones.clear();
         for (Edge e: E.values()) {
             if (!e.isValid() | e.nodeList.size() <= 1) {
                 alones.add(e.id);
