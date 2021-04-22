@@ -4,16 +4,11 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.IOException;
-
+import java.lang.Character;
 
 /* Maven is used to pull in these dependencies. */
 import com.google.gson.Gson;
@@ -278,6 +273,93 @@ public class MapServer {
     }
 
     /**
+     *
+     */
+    private static class Trie {
+        private class TrieNode {
+            private HashMap<Character, TrieNode> children;
+            private String content;
+            private boolean isWord;
+            public TrieNode() {
+                children = new HashMap<>();
+                isWord = false;
+
+            }
+            public HashMap<Character, TrieNode> getChildren() {
+                return children;
+            }
+            public void setEndOfWord(boolean status) {
+                isWord = status;
+            }
+
+            public boolean isEndOfWord() {
+                return isWord;
+            }
+        }
+        private TrieNode root;
+
+        public void insert(String word) {
+            if (root == null) {
+                root = new TrieNode();
+            }
+            TrieNode current = root;
+            for (char l: word.toCharArray()) {
+                if (current.getChildren().containsKey(l)) {
+                    current = current.getChildren().get(l);
+                } else {
+                    current.getChildren().put(l, new TrieNode());
+                    current = current.getChildren().get(l);
+                }
+            }
+            current.setEndOfWord(true);
+        }
+
+        @Override
+        public String toString() {
+            return "Trie{" +
+                    "root=" + root +
+                    '}';
+        }
+
+        public void find(String word, List<String> words) {
+            TrieNode current = root;
+            String w = "";
+            for (int i = 0; i < word.length(); i++) {
+                char ch = word.charAt(i);
+                ch = Character.toLowerCase(ch);
+                TrieNode node = current.getChildren().get(ch);
+                if (node == null) {
+                    ch = Character.toUpperCase(ch);
+                    node = current.getChildren().get(ch);
+                }
+                if (node == null) {
+                    return ;
+                }
+                w += ch;
+                current = node;
+            }
+            if (current.isEndOfWord()){
+                words.add(w);
+            }
+            traverse(words, w, current);
+        }
+
+        public void traverse(List<String> words, String word, TrieNode current) {
+            if (current.isWord) {
+                words.add(word);
+                System.out.println(word);
+            }
+            if (current == null) {
+                return;
+            }
+            for (Character i: current.getChildren().keySet()) {
+                traverse(words, word + i, current.getChildren().get(i));
+            }
+        }
+
+    }
+
+    /**
      * In linear time, collect all the names of OSM locations that prefix-match the query string.
      * @param prefix Prefix string to be searched for. Could be any case, with our without
      *               punctuation.
@@ -285,7 +367,16 @@ public class MapServer {
      * cleaned <code>prefix</code>.
      */
     public static List<String> getLocationsByPrefix(String prefix) {
-        return new LinkedList<>();
+        Trie trie = new Trie();
+        List<String> words = new ArrayList<>();
+        for (long id: graph.vertices()) {
+            GraphDB.Node node = graph.getNode(id);
+            if (node.getLocation() != null) {
+                trie.insert(node.getLocation());
+            }
+        }
+        trie.find(prefix, words);
+        return words;
     }
 
     /**

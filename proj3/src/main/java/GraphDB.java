@@ -31,6 +31,7 @@ public class GraphDB {
             this.id = id;
             this.lon = lon;
             this.lat = lat;
+            this.location = null;
         }
 
         public long getId() {
@@ -47,6 +48,10 @@ public class GraphDB {
 
         public void setLocation(String location) {
             this.location = location;
+        }
+
+        public String getLocation() {
+            return location;
         }
 
         @Override
