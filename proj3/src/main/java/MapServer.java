@@ -392,7 +392,24 @@ public class MapServer {
      * "id" : Number, The id of the node. <br>
      */
     public static List<Map<String, Object>> getLocations(String locationName) {
-        return new LinkedList<>();
+        List<Map<String, Object>> res = new ArrayList<Map<String, Object>>();
+        for (long id: graph.vertices()) {
+            GraphDB.Node node = graph.getNode(id);
+            if (node.getLocation() == null) {
+                continue;
+            }
+            if (node.getLocation().equals(locationName)) {
+                Map<String, Object> tmp = new HashMap<>();
+                tmp.put("lat", node.getLat());
+                tmp.put("lon", node.getLon());
+                tmp.put("name", node.getLocation());
+                tmp.put("id", node.getId());
+
+                res.add(tmp);
+            }
+        }
+//        System.out.println(res.toString());
+        return res;
     }
 
     /**
