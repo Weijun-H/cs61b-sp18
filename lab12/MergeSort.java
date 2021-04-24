@@ -53,14 +53,37 @@ public class MergeSort {
      */
     private static <Item extends Comparable> Queue<Item> mergeSortedQueues(
             Queue<Item> q1, Queue<Item> q2) {
-        // Your code here!
-        return null;
+
+        Queue<Item> sortedQ = new Queue<Item>();
+        Queue<Item> temp1 = q1;
+        Queue<Item> temp2 = q2;
+
+        while (temp2.size() != 0 && temp1.size() != 0) {
+            Item i = getMin(temp1, temp2);
+            sortedQ.enqueue(i);
+        }
+        while (temp1.size() != 0) {
+            sortedQ.enqueue(temp1.dequeue());
+        }
+        while (temp1.size() != 0) {
+            sortedQ.enqueue(temp1.dequeue());
+        }
+        return sortedQ;
     }
 
     /** Returns a Queue that contains the given items sorted from least to greatest. */
     public static <Item extends Comparable> Queue<Item> mergeSort(
             Queue<Item> items) {
         // Your code here!
-        return items;
+
+    }
+
+    public static void main(String[] args) {
+        Queue<String> students = new Queue<String>();
+        students.enqueue("Alice");
+        students.enqueue("Vanessa");
+        students.enqueue("Ethan");
+
     }
 }
+
