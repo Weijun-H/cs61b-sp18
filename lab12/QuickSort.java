@@ -48,6 +48,16 @@ public class QuickSort {
             Queue<Item> unsorted, Item pivot,
             Queue<Item> less, Queue<Item> equal, Queue<Item> greater) {
         // Your code here!
+        while (unsorted.size() != 0) {
+            Item i = unsorted.dequeue();
+            if (i.compareTo(pivot) <0) {
+                less.enqueue(i);
+            } else if (i.compareTo(pivot) > 0) {
+                greater.enqueue(i);
+            } else {
+                equal.enqueue(i);
+            }
+        }
     }
 
     /** Returns a Queue that contains the given items sorted from least to greatest. */
@@ -55,5 +65,15 @@ public class QuickSort {
             Queue<Item> items) {
         // Your code here!
         return items;
+    }
+
+
+
+    public static void main(String[] args) {
+        Queue<String> students = new Queue<String>();
+        students.enqueue("Alice");
+        students.enqueue("Vanessa");
+        students.enqueue("Ethan");
+        System.out.println(quickSort(students).toString());
     }
 }
