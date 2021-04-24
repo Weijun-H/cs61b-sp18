@@ -17,7 +17,16 @@ public class RadixSort {
      */
     public static String[] sort(String[] asciis) {
         // TODO: Implement LSD Sort
-        return null;
+        String[] datas = asciis.clone();
+        int time = asciis[0].length();
+        for (int i = time - 1; i >= 0; i--) {
+            sortHelperLSD(datas,i);
+//            for (int j = 0; j < asciis.length; j++) {
+//                System.out.print(datas[j] + " ");
+//            }
+//            System.out.println();
+        }
+        return datas;
     }
 
     /**
@@ -28,7 +37,35 @@ public class RadixSort {
      */
     private static void sortHelperLSD(String[] asciis, int index) {
         // Optional LSD helper method for required LSD radix sort
-        return;
+
+        // gather all the counts for each value
+        int[] counts = new int[10];
+        for (String i : asciis) {
+            counts[i.charAt(index) - 48]++;
+        }
+
+        // when we're dealing with ints, we can just put each value
+        // count number of times into the new array
+        String[] sorted = new String[asciis.length];
+        int k = 0;
+        for (int i = 0; i < counts.length; i += 1) {
+            for (int j = 0; j < counts[i]; j += 1) {
+                int cnt = 0;
+                for (String num: asciis) {
+                    if (num.charAt(index) - 48 == i && k < asciis.length) {
+                        sorted[k] = num;
+                        k++;
+                        cnt++;
+                    }
+                }
+                j += cnt - 1;
+            }
+        }
+
+        for (int i = 0; i < asciis.length; i++) {
+            asciis[i] = sorted[i];
+        }
+        // return the sorted array
     }
 
     /**
@@ -45,4 +82,12 @@ public class RadixSort {
         // Optional MSD helper method for optional MSD radix sort
         return;
     }
+
+    public static void main(String[] args) {
+        String[] sample = {"127","253","131", "999"};
+        RadixSort.sort(sample);
+    }
+
+
+
 }
