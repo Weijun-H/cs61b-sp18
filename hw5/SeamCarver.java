@@ -20,7 +20,7 @@ public class SeamCarver {
         }
     }
     private int _width, _height;
-    public Picture _picture;
+    private Picture _picture;
     private double[][] energyMatric;
 
     public SeamCarver(Picture picture) {
@@ -87,7 +87,7 @@ public class SeamCarver {
         Picture rotatePicture = new Picture(_height, _width);
         for (int i = 0; i < _height; i++) {
             for (int j = 0; j < _width; j++) {
-                rotatePicture.setRGB(i, j, this._picture.getRGB(j,i));
+                rotatePicture.set(i, j, this._picture.get(j,i));
             }
         }
         SeamCarver rotateSeam = new SeamCarver(rotatePicture);
