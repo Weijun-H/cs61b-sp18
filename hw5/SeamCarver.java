@@ -62,7 +62,7 @@ public class SeamCarver {
         double redXL = _picture.get(xL, y).getRed();
         double redXR = _picture.get(xR, y).getRed();
         double greenXL = _picture.get(xL, y).getGreen();
-        double greenXR = _picture.get(xL, y).getGreen();
+        double greenXR = _picture.get(xR, y).getGreen();
         double blueXL = _picture.get(xL, y).getBlue();
         double blueXR = _picture.get(xR, y).getBlue();
         return (redXL - redXR) * (redXL - redXR) + (greenXL - greenXR) * (greenXL - greenXR)
@@ -84,8 +84,16 @@ public class SeamCarver {
     }
 
     public   int[] findHorizontalSeam() {
-        return null;
-    }           // sequence of indices for horizontal seam
+        Picture rotatePicture = new Picture(_height, _width);
+        for (int i = 0; i < _height; i++) {
+            for (int j = 0; j < _width; j++) {
+                rotatePicture.setRGB(i, j, _picture.getRGB(j,i));
+            }
+        }
+
+        SeamCarver rotateSeam = new SeamCarver(rotatePicture);
+        return rotateSeam.findVerticalSeam();
+    }
 
     public   int[] findVerticalSeam() {
         // Initialize the accumulated array
@@ -130,7 +138,7 @@ public class SeamCarver {
             route.add(startX);
         }
 //        System.out.println(route.toString());
-        Collections.reverse(route);
+//        Collections.reverse(route);
         int[] ans = new int[_height];
         for (int i = 0; i < _height; i++) {
             ans[i] = route.get(i);
