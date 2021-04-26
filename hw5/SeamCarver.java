@@ -20,7 +20,7 @@ public class SeamCarver {
         }
     }
     private int _width, _height;
-    private Picture _picture;
+    public Picture _picture;
     private double[][] energyMatric;
 
     public SeamCarver(Picture picture) {
@@ -87,15 +87,14 @@ public class SeamCarver {
         Picture rotatePicture = new Picture(_height, _width);
         for (int i = 0; i < _height; i++) {
             for (int j = 0; j < _width; j++) {
-                rotatePicture.setRGB(i, j, _picture.getRGB(j,i));
+                rotatePicture.setRGB(i, j, this._picture.getRGB(j,i));
             }
         }
-
         SeamCarver rotateSeam = new SeamCarver(rotatePicture);
         return rotateSeam.findVerticalSeam();
     }
 
-    public   int[] findVerticalSeam() {
+    public int[] findVerticalSeam() {
         // Initialize the accumulated array
         double[][] M = new double[_width][_height];
         int [][] track = new int[_width][_height];
