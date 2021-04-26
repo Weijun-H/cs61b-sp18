@@ -27,7 +27,7 @@ public class SeamCarver {
     public SeamCarver(Picture picture) {
         _height = picture.height();
         _width = picture.width();
-        _picture = picture;
+        _picture = new Picture(picture);
         energyMatric = new double[_width][_height];
         for (int x = 0; x < _width; x++) {
             ArrayList<Double> rowEnergy = new ArrayList<>();
