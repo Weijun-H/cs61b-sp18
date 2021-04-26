@@ -1,5 +1,6 @@
 import edu.princeton.cs.algs4.Picture;
 
+import java.nio.channels.FileLock;
 import java.util.*;
 
 
@@ -97,6 +98,7 @@ public class SeamCarver {
     public int[] findVerticalSeam() {
         // Initialize the accumulated array
         double[][] M = new double[_width][_height];
+        int[][] pushFlag = new int[_width][_height];
         int [][] track = new int[_width][_height];
         for (int i = 0; i < _width; i++) {
             for (int j = 0; j < _height; j++) {
@@ -106,6 +108,7 @@ public class SeamCarver {
                     M[i][j] = Double.MAX_VALUE;
                 }
                 track[i][j] = -1;
+                pushFlag[i][j] = 0;
             }
         }
 
@@ -117,7 +120,7 @@ public class SeamCarver {
                 int x = pos.get_x();
                 int y = pos.get_y();
                 if (y == 0) continue;
-                addNextStep(x, y, waitSearch);
+                addNextStep(x, y, waitSearch, pushFlag);
                 updateM(x, y, M, track);
             }
         }
@@ -146,17 +149,23 @@ public class SeamCarver {
         return ans;
     }
 
-    private void addNextStep(int x, int y, Deque<Position> waitSearch) {
-        if (x == 0) {
-            waitSearch.add(new Position(x + 1, y - 1));
+    private void addNextStep(int x, int y, Deque<Position> waitSearch, int[][] Flags) {
+        if (x != _width - 1) {
+            if (Flags[x + 1][y - 1] == 0) {
+                waitSearch.add(new Position(x + 1, y - 1));
+                Flags[x + 1][y - 1] = 1;
+            }
+        }
+        if (Flags[x][y - 1] == 0) {
             waitSearch.add(new Position(x, y - 1));
-        } else if (x == _width - 1) {
-            waitSearch.add(new Position(x - 1, y - 1));
-            waitSearch.add(new Position(x, y - 1));
-        } else {
-            waitSearch.add(new Position(x, y - 1));
-            waitSearch.add(new Position(x + 1, y - 1));
-            waitSearch.add(new Position(x - 1, y - 1));
+            Flags[x][y - 1] = 1;
+        }
+
+        if (x != 0) {
+            if (Flags[x - 1][y - 1] == 0) {
+                waitSearch.add(new Position(x - 1, y - 1));
+                Flags[x - 1][y - 1] = 1;
+            }
         }
     }
 
