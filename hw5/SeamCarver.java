@@ -115,15 +115,27 @@ public class SeamCarver {
         Deque<Position> waitSearch = new LinkedList<>();
         for (int i = 0; i < _width; i++) {
             waitSearch.add(new Position(i, _height - 1));
-            while (!waitSearch.isEmpty()){
-                Position pos = waitSearch.poll();
-                int x = pos.get_x();
-                int y = pos.get_y();
-                if (y == 0) continue;
-                addNextStep(x, y, waitSearch, pushFlag);
-                updateM(x, y, M, track);
-            }
         }
+        while (!waitSearch.isEmpty()) {
+            Position pos = waitSearch.poll();
+            int x = pos.get_x();
+            int y = pos.get_y();
+            if (y == 0) continue;
+            addNextStep(x, y, waitSearch, pushFlag);
+            updateM(x, y, M, track);
+        }
+
+//        for (int i = 0; i < _width; i++) {
+//            waitSearch.add(new Position(i, _height - 1));
+//            while (!waitSearch.isEmpty()){
+//                Position pos = waitSearch.poll();
+//                int x = pos.get_x();
+//                int y = pos.get_y();
+//                if (y == 0) continue;
+//                addNextStep(x, y, waitSearch, pushFlag);
+//                updateM(x, y, M, track);
+//            }
+//        }
 
         List<Integer> route = new ArrayList<>();
         double minDis = Double.MAX_VALUE;
@@ -146,6 +158,10 @@ public class SeamCarver {
             ans[i] = route.get(i);
         }
 
+        System.out.print("XXX: ");
+        for (int i = 0; i < _width; i ++) {
+            System.out.print(M[i][_height - 1] + "  ");
+        }
         return ans;
     }
 
@@ -175,6 +191,7 @@ public class SeamCarver {
             if (M[x + 1][y - 1] > M[x][y] + energyMatric[x + 1][y - 1]) {
                 M[x + 1][y - 1] = M[x][y] + energyMatric[x + 1][y - 1];
                 track[x + 1][y - 1] = x;
+                track[x + 1][y - 1] = x;
             }
         }
             if (M[x][y - 1] > M[x][y] + energyMatric[x][y - 1]) {
@@ -189,7 +206,6 @@ public class SeamCarver {
             }
         }
     }
-
     public    void removeHorizontalSeam(int[] seam) {
         SeamRemover.removeHorizontalSeam(_picture, findHorizontalSeam());
 
